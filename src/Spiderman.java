@@ -18,7 +18,7 @@ public class Spiderman extends Warrior{
 	public Action playTurn(long tick, int actionNumber) {
 		WarriorData enemyData = BattleField.getInstance().getEnemyData();
 
-		//ver que onda el getEnemyNumber. Yo siempre voy a querer que el guerrero se mueva en todos los turnos. 
+		//TODO: ver que onda el getEnemyNumber. Yo siempre voy a querer que el guerrero se mueva en todos los turnos. 
 		//Son 3 las acciones que se pueden hacer por turno. 1 x cada una, actionNumber indica en cual estas.
 		//Se puede realizar Move, Attack, BuildWall, Suicide o Skip. 
 		
@@ -58,6 +58,6 @@ public class Spiderman extends Warrior{
 	
 	//getSpecialItems te muestra las cajitas que esten cerca tuyo. 90% son cajitas buenas, el resto cajitas malas
 	//Cuando comienza la batalla se puede invertir la distribución de las cajas. 
-	//Sobreescribir useSpecialItem para que no agarre siempre las cajas
+	//TODO: Sobreescribir useSpecialItem para que no agarre siempre las cajas
 
 }
