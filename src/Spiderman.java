@@ -55,5 +55,9 @@ public class Spiderman extends Warrior{
 	public void worldChanged(FieldCell oldCell, FieldCell newCell) {
 		
 	}
+	
+	//getSpecialItems te muestra las cajitas que esten cerca tuyo. 90% son cajitas buenas, el resto cajitas malas
+	//Cuando comienza la batalla se puede invertir la distribución de las cajas. 
+	//Sobreescribir useSpecialItem para que no agarre siempre las cajas
 
 }
