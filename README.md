@@ -1,4 +1,4 @@
 # WarriorsBinker
 
 Desarrollo de un Bot a partir del Framework desarrollado por Gabriel Barrera
-Para la materia Inteligencia Artificial de la Universidad de Palermo
+Para la materia Inteligencia Artificial de la Universidad de Palermo. Segundo cuatrimestre 2018
