@@ -15,7 +15,7 @@ public class Fury extends WarriorManager {
 	
 		ConfigurationManager.getInstance().getMaxRangeForWarrior();
 
-		//TODO: Hacer la división de los getMaxPoints para cada atributo. O hacerlo random. 
+		//TODO: Hacer la divisiÃ³n de los getMaxPoints para cada atributo. O hacerlo random. 
 			
 		return new Spiderman("Spiderman",20,20,20,20,20);
 		
