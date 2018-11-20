@@ -16,7 +16,6 @@ public class SaltoSpider extends Move {
 		this.stepY = stepY;
 	}
 	
-	//TODO: MODIFICAR MOVIMIENTO
 	@Override
 	public ArrayList<FieldCell> move() {
 		int x = from.getX();

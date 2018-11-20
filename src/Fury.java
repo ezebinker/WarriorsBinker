@@ -21,22 +21,23 @@ public class Fury extends WarriorManager {
 		int range = max / 5;
 		int defense = max / 5;
 		
+		int spawneados=this.getCount()-1;
+		
 		if (BattleField.getInstance().getTick() != 0 ){ 
-			if (this.getCount()-1 < BattleField.getInstance().getEnemyData().getWarriorNumber()){
-				health   = max * 70 / 100;
+			if (spawneados < BattleField.getInstance().getEnemyData().getWarriorNumber()){
+				health   = max * 65 / 100;
 				defense  = max * 05 / 100; 
 				strength = max * 05 / 100;
 				speed    = max * 15 / 100;
-				range    = max * 05 / 100;
+				range    = max * 10 / 100;
 				
 			}
-			
-			if (this.getCount()-1 > BattleField.getInstance().getEnemyData().getWarriorNumber()){
-				health   = max * 15 / 100;
+			else if (spawneados> BattleField.getInstance().getEnemyData().getWarriorNumber()){
+				health   = max * 25 / 100;
 				defense  = max * 10 / 100; 
-				strength = max * 35 / 100;
-				speed    = max * 05 / 100;
-				range    = max * 35 / 100;	
+				strength = max * 25 / 100;
+				speed    = max * 15 / 100;
+				range    = max * 25 / 100;	
 			}
 		}
 			

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class AStar {
-
-	//TODO: ADAPTAR CLASE
 	
 	private int[][] map;
 	private ArrayList<Node> nodes;

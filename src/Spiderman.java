@@ -26,24 +26,23 @@ public class Spiderman extends Warrior{
 		BattleField bf=BattleField.getInstance();
 		WarriorData enemyData = bf.getEnemyData();
 		
-		//bf.calculateDistance para calcular distancia a una celda
-		
-		//getEnemyNumber te dice cual es el numero de enemigo actual
-		//A este evento se lo llama 3 veces consecutiva a cada uno.
-		//El tick es el numero del turno, y el actionnumber es 0, 1 y 2. 
-		
-		//TODO: ver que onda el getEnemyNumber. Yo siempre voy a querer que el guerrero se mueva en todos los turnos. 
-		//Son 3 las acciones que se pueden hacer por turno. 1 x cada una, actionNumber indica en cual estas.
-		//Se puede realizar Move, Attack, BuildWall, Suicide o Skip. 
-		
-		//Sobreescribir el método useSpecialItems si no los quiero
-		//Revisar si algun atributo cambió
-		
 		WarriorData hunterData=bf.getHunterData();
 		ArrayList<FieldCell> si=bf.getSpecialItems();
 		
-		if (actionNumber==0) {
-			hasMoved=false;
+		FieldCell target = null;
+		int distanciaCercana = Integer.MAX_VALUE;
+		
+		if (actionNumber == 0) { //Si es la primera acci�n del turno
+			ArrayList<FieldCell> specialItems = new ArrayList<>();
+			
+			BattleField.getInstance().getSpecialItems().forEach(fieldCell -> specialItems.add(fieldCell));
+			for (FieldCell specialItem : specialItems) {
+				int distance = obtenerDistancia(this.getPosition(), specialItem);
+				if ((distanciaCercana > distance && distance <= getMaxRange())) {
+					distanciaCercana = distance;
+					target = specialItem;
+				}
+			}
 		}
 		
 		if (enemyData.getInRange()) {
@@ -67,12 +66,20 @@ public class Spiderman extends Warrior{
 	@Override
 	public void enemyKilled() {
 		System.out.println("Oh Yeah!");
-		//Aca poner una variable de, si mat� al otro puedo cambiar la estrategia del playturn. 
 	}
 
 	@Override
 	public void worldChanged(FieldCell oldCell, FieldCell newCell) {
 		
+	}
+	
+	private int obtenerDistancia(FieldCell source, FieldCell target) {
+		int distancia = 0;
+
+		distancia = Math.abs(target.getX() - source.getX());
+		distancia += Math.abs(target.getY() - source.getY());
+
+		return distancia;
 	}
 	
 	private int getMaxRange() {
