@@ -1,10 +1,16 @@
 package utils;
 
+import java.awt.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import ia.battle.core.BattleField;
+import ia.battle.core.FieldCell;
+import ia.battle.core.FieldCellType;
+
 public class AStar {
 	
+
 	private int[][] map;
 	private ArrayList<Node> nodes;
 	private ArrayList<Node> closedNodes, openNodes;
@@ -12,6 +18,19 @@ public class AStar {
 
 	public AStar(int[][] map) {
 		this.map = map;
+	}
+	public AStar(int witdth, int height) {
+		nodes = new ArrayList<Node>();
+		closedNodes = new ArrayList<Node>();
+		openNodes = new ArrayList<Node>();
+		
+		this.map = new int[witdth][height];
+		for (int x = 0; x < map.length; x++)
+			for (int y = 0; y < map[x].length; y++) {
+				if (BattleField.getInstance().getFieldCell(x, y).getFieldCellType() == FieldCellType.NORMAL)
+					nodes.add(new Node(x, y));
+			}
+		
 	}
 
 	public ArrayList<Node> findPath(int x1, int y1, int x2, int y2) {
@@ -36,15 +55,67 @@ public class AStar {
 		}
 
 		return retrievePath();
+	} 
+	public ArrayList<Node> findPath(FieldCell cellFrom, FieldCell cellTo) {
+		
+		origin      = nodes.get(nodes.indexOf(new Node(cellFrom.getX(), cellFrom.getY() )));
+		try {
+			destination = nodes.get(nodes.indexOf(new Node(cellTo.getX()  , cellTo.getY()   )));
+		} catch (java.lang.ArrayIndexOutOfBoundsException e) {
+			return new ArrayList<Node>();
+		}
+		
+		
+		Node currentNode = origin;
+		while (!currentNode.equals(destination)) {
+			processNode(currentNode);
+			currentNode = getMinFValueNode();
+			if (currentNode == null) 
+				break;
+		}
+		
+		return retrievePath();
+	}
+	
+	public ArrayList<Node> getNodesInRangeOfNode(Node node, int range){
+		ArrayList<Node> nodes = new ArrayList<Node>();
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                if ((Math.pow(i - node.getX(), 2)) + (Math.pow(j - node.getY(), 2)) <= Math.pow(range, 2)){
+                	nodes.add(new Node(i, j));
+                }
+            }
+        }
+		return nodes;
+	}
+	
+
+	public void addClosedNodes(ArrayList<Node> nodes){
+		closedNodes.addAll(nodes);
+	}
+	
+	public void prioritizeNodes(ArrayList<Node> nodes){
+		for (Node node : nodes){
+			try {
+				Node n = this.nodes.get(this.nodes.indexOf(node));
+				n.setG(n.getG()-Integer.MAX_VALUE);
+			} catch ( java.lang.ArrayIndexOutOfBoundsException e) {
+				
+			}
+		}
 	}
 
 	private ArrayList<Node> retrievePath() {
 		ArrayList<Node> path = new ArrayList<Node>();
 		Node node = destination;
 
-		while (!node.equals(origin)) {
+		while (node != null && !node.equals(origin)) {
 			path.add(node);
 			node = node.getParent();
+		}
+		if (node == null){
+			System.err.println("No way!");
+			return new ArrayList<Node>();
 		}
 
 		Collections.reverse(path);
@@ -55,6 +126,7 @@ public class AStar {
 	private void processNode(Node node) {
 
 		ArrayList<Node> adj = getAdjacentNodes(node);
+		
 
 		openNodes.remove(node);
 		closedNodes.add(node);
@@ -70,10 +142,14 @@ public class AStar {
 
 			//Compute the distance from origin to node 'n' 
 			int g = node.getG();
+			if (g == -Integer.MAX_VALUE) 
+				System.out.println("Nodo importante");
 			if (node.getX() == n.getX() || node.getY() == n.getY())
 				g += 10;
 			else
 				g += 14;
+			
+			g = (int)(g * BattleField.getInstance().getFieldCell(n.getX(), n.getY()).getCost());
 
 			if (!openNodes.contains(n)) {
 
@@ -95,15 +171,27 @@ public class AStar {
 	}
 
 	private Node getMinFValueNode() {
-		Node node = openNodes.get(0);
+		
+		try {
+			Node node = openNodes.get(0);
 
-		for (Node n : openNodes)
-			if (node.getF() > n.getF())
-				node = n;
+			for (Node n : openNodes)
+				if (node.getF() > n.getF())
+					node = n;
 
-		return node;
+			return node;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			System.err.println("No empty nodes: " + e.getMessage());
+			return null;
+		} 
 	}
 
+	private ArrayList<FieldCell> getAdjacentCells(FieldCell fieldCell){
+		return (ArrayList<FieldCell>) BattleField.getInstance().getAdjacentCells(fieldCell);
+	}
+	
 	private ArrayList<Node> getAdjacentNodes(Node node) {
 		ArrayList<Node> adjCells = new ArrayList<Node>();
 
@@ -137,7 +225,7 @@ public class AStar {
 		return adjCells;
 	}
 
-	private void mergePath(ArrayList<Node> path) {
+	public void mergePath(ArrayList<Node> path) {
 		for(Node node : path)
 			map[node.getX()][node.getY()] = 2;
 		
@@ -162,23 +250,5 @@ public class AStar {
 				
 			System.out.println();
 		}
-	}
-
-	public static void main(String[] args) {
-		
-		MazeGenerator mg = new MazeGenerator((40 - 1) / 4, (40 - 1) / 2);
-		
-		AStar a = new AStar(mg.getMaze());
-		
-		System.out.println("The maze to resolve:");
-		a.printMap();
-
-		ArrayList<Node> bestPath = a.findPath(1, 1, 35, 37);
-		
-		a.mergePath(bestPath);
-		
-		System.out.println();
-		System.out.println("The best path:");
-		a.printMap();
 	}
 }

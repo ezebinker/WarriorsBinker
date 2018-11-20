@@ -1,17 +1,18 @@
 import java.util.ArrayList;
 
 import ia.battle.core.BattleField;
+import ia.battle.core.ConfigurationManager;
 import ia.battle.core.FieldCell;
 import ia.battle.core.Warrior;
 import ia.battle.core.WarriorData;
 import ia.battle.core.actions.*;
 import ia.exceptions.RuleException;
+import utils.AStar;
 import utils.AtaqueRecibido;
 
 public class Spiderman extends Warrior{
 
 	public boolean hasMoved=false;
-	private static final int RANGO_CAZADOR = 5;
 	private ArrayList<AtaqueRecibido> Ataques;
 	
 	
@@ -32,8 +33,17 @@ public class Spiderman extends Warrior{
 		FieldCell target = null;
 		int distanciaCercana = Integer.MAX_VALUE;
 		
+		if (enemyData.getInRange()) {
+			return new Attack(enemyData.getFieldCell());
+			
+		}else if(enemyData.getHealth()<10) {
+			return new Skip();
+		}
+		
 		if (actionNumber == 0) { //Si es la primera acción del turno
 			ArrayList<FieldCell> specialItems = new ArrayList<>();
+			
+			//Trato de encontrar algun objeto especial
 			
 			BattleField.getInstance().getSpecialItems().forEach(fieldCell -> specialItems.add(fieldCell));
 			for (FieldCell specialItem : specialItems) {
@@ -45,12 +55,14 @@ public class Spiderman extends Warrior{
 			}
 		}
 		
-		if (enemyData.getInRange()) {
-			return new Attack(enemyData.getFieldCell());
-			
-		}else if(enemyData.getHealth()<10) {
-			return new Skip();
+		if (target != null && enemyData.getFieldCell() != null) {
+			si = getPathFrom(getPosition(), target);
+			if (!si.isEmpty()){ 
+				hasMoved = true;
+				return new Movimiento(si);
+			}
 		}
+		
 
 		return new SaltoSpider(getPosition(), 5, 4);
 		
@@ -85,6 +97,19 @@ public class Spiderman extends Warrior{
 	private int getMaxRange() {
 		int max=getSpeed()/5;
 		return max;
+	}
+	
+	private ArrayList<FieldCell> getPathFrom(FieldCell source, FieldCell target) {
+		ArrayList<FieldCell> path = new ArrayList<FieldCell>();
+		if (!(source == null || target == null)) {
+			AStar a = new AStar(ConfigurationManager.getInstance().getMapWidth(),
+					ConfigurationManager.getInstance().getMapHeight());
+			
+			a.findPath(source, target).forEach(node -> {
+				path.add(BattleField.getInstance().getFieldCell(node.getX(), node.getY()));
+			});
+		}
+		return path;
 	}
 	
 	//getSpecialItems te muestra las cajitas que esten cerca tuyo. 90% son cajitas buenas, el resto cajitas malas
