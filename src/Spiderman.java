@@ -34,6 +34,11 @@ public class Spiderman extends Warrior{
 		FieldCell target = null;
 		int distanciaCercana = Integer.MAX_VALUE;
 		
+		if(hunterData.getInRange())
+		{
+			return new Attack(hunterData.getFieldCell());
+		}
+		
 		if (enemyData.getInRange()) {
 			return new Attack(enemyData.getFieldCell());
 			
@@ -86,7 +91,7 @@ public class Spiderman extends Warrior{
 			return new Movimiento(si);
 		}
 		
-		return new ia.battle.core.actions.Skip();
+		return new Skip();
 		
 	}
 
