@@ -11,4 +11,7 @@
 		//Sobreescribir el método useSpecialItems si no los quiero
 		//Revisar si algun atributo cambió
 		
-		
+			
+	//getSpecialItems te muestra las cajitas que esten cerca tuyo. 90% son cajitas buenas, el resto cajitas malas
+	//Cuando comienza la batalla se puede invertir la distribución de las cajas. 
+	//TODO: Sobreescribir useSpecialItem para que no agarre siempre las cajas

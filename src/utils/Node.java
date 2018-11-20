@@ -1,7 +1,9 @@
 package utils;
+
+import ia.battle.core.FieldCell;
+
 public class Node {
-	
-	//TODO: ADAPTAR CLASE
+
 	
 	private int g;
 	private int h;
@@ -12,6 +14,11 @@ public class Node {
 	public Node(int x, int y) {
 		this.x = x;
 		this.y = y;
+	}
+	
+	public Node(FieldCell fieldCell){
+		x = fieldCell.getX();
+		y = fieldCell.getY();
 	}
 	
 	public int getF() {

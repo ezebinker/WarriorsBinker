@@ -9,9 +9,10 @@ import ia.battle.core.actions.*;
 import ia.exceptions.RuleException;
 import utils.AStar;
 import utils.AtaqueRecibido;
+import utils.Node;
 
 public class Spiderman extends Warrior{
-
+	public static int RANGO_CAZADOR=5;
 	public boolean hasMoved=false;
 	private ArrayList<AtaqueRecibido> Ataques;
 	
@@ -56,6 +57,7 @@ public class Spiderman extends Warrior{
 		}
 		
 		if (target != null && enemyData.getFieldCell() != null) {
+			si.addAll(getPathFree(target, enemyData.getFieldCell()));
 			si = getPathFrom(getPosition(), target);
 			if (!si.isEmpty()){ 
 				hasMoved = true;
@@ -64,7 +66,27 @@ public class Spiderman extends Warrior{
 		}
 		
 
-		return new SaltoSpider(getPosition(), 5, 4);
+		if (actionNumber == 2) {
+			hasMoved = false;
+			
+		}
+		si = getPathFree(getPosition(), enemyData.getFieldCell());
+		for (int i = this.getRange()-1; i>0 && !si.isEmpty() ;i--){
+			si.remove(si.size() -1);
+		}
+		if (si.isEmpty()){
+			si = getPathFrom(getPosition(), enemyData.getFieldCell());
+			for (int i = this.getRange()-1; i>0 && !si.isEmpty() ;i--){
+				si.remove(si.size() -1);
+			}
+		}
+		if (!si.isEmpty()) {
+			
+			hasMoved = true;
+			return new Movimiento(si);
+		}
+		
+		return new ia.battle.core.actions.Skip();
 		
 	}
 
@@ -111,9 +133,19 @@ public class Spiderman extends Warrior{
 		}
 		return path;
 	}
-	
-	//getSpecialItems te muestra las cajitas que esten cerca tuyo. 90% son cajitas buenas, el resto cajitas malas
-	//Cuando comienza la batalla se puede invertir la distribución de las cajas. 
-	//TODO: Sobreescribir useSpecialItem para que no agarre siempre las cajas
+
+	private ArrayList<FieldCell> getPathFree(FieldCell source, FieldCell target) {
+		ArrayList<FieldCell> path = new ArrayList<FieldCell>();
+		if (!(source == null || target == null)) {
+			AStar astarobject = new AStar(ConfigurationManager.getInstance().getMapWidth(),
+					ConfigurationManager.getInstance().getMapHeight());
+			astarobject.addClosedNodes(astarobject.getNodesInRangeOfNode(new Node(BattleField.getInstance().getHunterData().getFieldCell()),RANGO_CAZADOR));
+
+			astarobject.findPath(source, target).forEach(node -> {
+				path.add(BattleField.getInstance().getFieldCell(node.getX(), node.getY()));
+			});
+		}
+		return path;
+	}
 
 }
