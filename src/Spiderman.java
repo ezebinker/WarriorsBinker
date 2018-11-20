@@ -6,15 +6,20 @@ import ia.battle.core.Warrior;
 import ia.battle.core.WarriorData;
 import ia.battle.core.actions.*;
 import ia.exceptions.RuleException;
+import utils.AtaqueRecibido;
 
 public class Spiderman extends Warrior{
 
+	public boolean hasMoved=false;
+	private static final int RANGO_CAZADOR = 5;
+	private ArrayList<AtaqueRecibido> Ataques;
+	
+	
 	public Spiderman(String name, int health, int defense, int strength, int speed, int range) throws RuleException {
 		super(name, health, defense, strength, speed, range);
-
+		Ataques=new ArrayList<AtaqueRecibido>();
 	}
 	
-	public boolean hasMoved;
 
 	@Override
 	public Action playTurn(long tick, int actionNumber) {
@@ -54,8 +59,7 @@ public class Spiderman extends Warrior{
 
 	@Override
 	public void wasAttacked(int damage, FieldCell source) {
-		((Fury) getWarriorManager()).remember(damage, source);
-
+		Ataques.add(new AtaqueRecibido(damage, source));
 		System.out.println("Ouch!");
 		
 	}
@@ -69,6 +73,11 @@ public class Spiderman extends Warrior{
 	@Override
 	public void worldChanged(FieldCell oldCell, FieldCell newCell) {
 		
+	}
+	
+	private int getMaxRange() {
+		int max=getSpeed()/5;
+		return max;
 	}
 	
 	//getSpecialItems te muestra las cajitas que esten cerca tuyo. 90% son cajitas buenas, el resto cajitas malas
